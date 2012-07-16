@@ -50,6 +50,6 @@ env =
 build do
   # command "#{install_dir}/embedded/bin/autoconf", :env => env
   command "./configure --prefix=#{install_dir}/embedded --with-opt-dir=#{install_dir}/embedded --enable-shared --disable-install-doc", :env => env
-  command "make -j #{max_build_jobs}"
-  command "make install"
+  command "make -j #{max_build_jobs}", :env => env
+  command "make install", :env => env
 end
