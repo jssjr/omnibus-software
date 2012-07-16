@@ -71,8 +71,8 @@ build do
       "-n #{install_dir}/bin",
       "--no-rdoc --no-ri"].join(" ")
 
-  ruby-shadow = "ruby-shadow" unless RUBY_PLATFORM.include?('freebsd')
-  gem ["install highline net-ssh-multi #{ruby-shadow}", # TODO: include knife gems?
+  ruby_shadow = "ruby-shadow" unless RUBY_PLATFORM.include?('freebsd')
+  gem ["install highline net-ssh-multi #{ruby_shadow}", # TODO: include knife gems?
        "-n #{install_dir}/bin",
        "--no-rdoc --no-ri"].join(" ")
 
