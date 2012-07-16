@@ -47,9 +47,11 @@ env =
     }
   end
 
+osmake = RUBY_PLATFORM.include?('freebsd') ? "gmake" : "make"
+
 build do
   # command "#{install_dir}/embedded/bin/autoconf", :env => env
   command "./configure --prefix=#{install_dir}/embedded --with-opt-dir=#{install_dir}/embedded --enable-shared --disable-install-doc", :env => env
-  command "env - PATH=$PATH make -j #{max_build_jobs}"
-  command "env - PATH=$PATH make install"
+  command "env - PATH=$PATH #{osmake} -j #{max_build_jobs}"
+  command "env - PATH=$PATH #{osmake} install"
 end
