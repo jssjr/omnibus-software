@@ -40,6 +40,8 @@ env = {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"}
 #
 ########################################################################
 
+osmake=(RUBY_PLATFORM.include?('freebsd')) ? "gmake" : "make"
+
 build do
   # build wide-character libraries
   command(["./configure",
@@ -48,20 +50,20 @@ build do
            "--without-debug",
            "--enable-widec"].join(" "),
           :env => env)
-  command "make -j #{max_build_jobs}", :env => env
-  command "make install", :env => env
+  command "#{osmake} -j #{max_build_jobs}", :env => env
+  command "#{osmake} install", :env => env
 
   # build non-wide-character libraries
-  command "make distclean"
+  command "#{osmake} distclean"
   command(["./configure",
            "--prefix=#{install_dir}/embedded",
            "--with-shared --with-termlib",
            "--without-debug"].join(" "),
           :env => env)
-  command "make -j #{max_build_jobs}", :env => env
+  command "#{osmake} -j #{max_build_jobs}", :env => env
 
   # installing the non-wide libraries will also install the non-wide
   # binaries, which doesn't happen to be a problem since we don't
   # utilize the ncurses binaries in private-chef (or oss chef)
-  command "make install", :env => env
+  command "#{osmake} install", :env => env
 end
