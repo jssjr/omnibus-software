@@ -20,6 +20,7 @@ version "1.9.2p290"
 
 deps = ["zlib", "ncurses", "readline", "openssl"]
 deps << "gdbm" if OHAI.platform == "mac_os_x"
+deps << "ffi" if OHAI.platform == "freebsd"
 dependencies deps
 
 
