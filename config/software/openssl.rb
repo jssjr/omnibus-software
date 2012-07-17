@@ -46,6 +46,17 @@ build do
              "-L#{install_dir}/embedded/lib",
              "-I#{install_dir}/embedded/include",
              "-R#{install_dir}/embedded/lib"].join(" ")
+  elsif platform == "freebsd"
+    command(["./config",
+             "--prefix=#{install_dir}/embedded",
+             "--with-zlib-lib=#{install_dir}/embedded/lib",
+             "--with-zlib-include=#{install_dir}/embedded/include",
+             "zlib",
+             "shared",
+             "-L#{install_dir}/embedded/lib",
+             "-I#{install_dir}/embedded/include",
+             "-R#{install_dir}/embedded/lib"].join(" ")
+            :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"})
   else
     command(["./config",
              "--prefix=#{install_dir}/embedded",
@@ -59,6 +70,6 @@ build do
   end
 
   # make and install
-  command "make", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib", "LDFLAGS" => "-R#{install_dir}/embedded/lib"}
+  command "make", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"}
   command "make install"
 end
