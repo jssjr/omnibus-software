@@ -58,6 +58,6 @@ gmake =
 build do
   # command "#{install_dir}/embedded/bin/autoconf", :env => env
   command "./configure --prefix=#{install_dir}/embedded --with-opt-dir=#{install_dir}/embedded --enable-shared --disable-install-doc", :env => env
-  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" "} PATH=$PATH #{gmake} -j #{max_build_jobs}" #XXX: strip env to stop bundler from messing with us
-  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" "} PATH=$PATH #{gmake} install"
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH #{gmake} -j #{max_build_jobs}" #XXX: strip env to stop bundler from messing with us
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH #{gmake} install"
 end
