@@ -56,7 +56,7 @@ env =
 configure_args =
   case platform
   when "freebsd"
-    "--enable-pthread --with-out-ext=fiddle,psych"
+    "--enable-pthread"
   else
     "make"
   end
