@@ -47,7 +47,7 @@ build do
              "-I#{install_dir}/embedded/include",
              "-R#{install_dir}/embedded/lib"].join(" ")
   elsif platform == "freebsd"
-    command(["./config",
+    command ["./config",
              "--prefix=#{install_dir}/embedded",
              "--with-zlib-lib=#{install_dir}/embedded/lib",
              "--with-zlib-include=#{install_dir}/embedded/include",
