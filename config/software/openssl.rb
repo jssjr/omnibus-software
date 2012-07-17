@@ -59,6 +59,6 @@ build do
   end
 
   # make and install
-  command "make", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"}
+  command "make", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib", "LDFLAGS" => "-R#{install_dir}/embedded/lib"}
   command "make install"
 end
