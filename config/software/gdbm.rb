@@ -25,9 +25,17 @@ source :url => "http://ftp.gnu.org/gnu/gdbm/gdbm-1.9.1.tar.gz",
 
 relative_path "gdbm-1.9.1"
 
+configure_args =
+  case platform
+  when "freebsd"
+    "--with-pic"
+  else
+    ""
+  end
+
 build do
   command "#{install_dir}/embedded/bin/autoconf"
-  command "./configure --prefix=#{install_dir}/embedded"
+  command "./configure --prefix=#{install_dir}/embedded #{configure_args}"
   command "make -j #{max_build_jobs}  BINOWN=root BINGRP=wheel" # TODO: is this a leftover from os x, a bug?
   command "make install"
 end

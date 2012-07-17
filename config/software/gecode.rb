@@ -32,6 +32,14 @@ configure_env = if test.exitstatus == 0
                   {}
                 end
 
+gmake =
+  case platform
+  when "freebsd"
+    "gmake"
+  else
+    "make"
+  end
+
 build do
   command(["./configure",
            "--prefix=#{install_dir}/embedded",
@@ -43,6 +51,6 @@ build do
            "--disable-qt",
            "--disable-examples"].join(" "),
           :env => configure_env)
-  command "make -j #{max_build_jobs}", :env => { "LD_RUN_PATH" => "#{install_dir}/embedded/lib" }
-  command "make install"
+  command "#{gmake} -j #{max_build_jobs}", :env => { "LD_RUN_PATH" => "#{install_dir}/embedded/lib" }
+  command "#{gmake} install"
 end

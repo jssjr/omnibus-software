@@ -43,15 +43,21 @@ env =
   else
     {
       "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
-      "LDFLAGS" => "-Wl,-rpath #{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
+      "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
     }
   end
 
-osmake = RUBY_PLATFORM.include?('freebsd') ? "gmake" : "make"
+gmake =
+  case platform
+  when "freebsd"
+    "gmake"
+  else
+    "make"
+  end
 
 build do
   # command "#{install_dir}/embedded/bin/autoconf", :env => env
   command "./configure --prefix=#{install_dir}/embedded --with-opt-dir=#{install_dir}/embedded --enable-shared --disable-install-doc", :env => env
-  command "env - PATH=$PATH #{osmake} -j #{max_build_jobs}"
-  command "env - PATH=$PATH #{osmake} install"
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" "} PATH=$PATH #{gmake} -j #{max_build_jobs}" #XXX: strip env to stop bundler from messing with us
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" "} PATH=$PATH #{gmake} install"
 end
