@@ -40,6 +40,11 @@ env =
       "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
       "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
     }
+  when "freebsd"
+    {
+      "CFLAGS" => "-pthread -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+      "LDFLAGS" => "-pthread -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include"
+    }
   else
     {
       "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
@@ -47,17 +52,19 @@ env =
     }
   end
 
-gmake =
+configure_args =
   case platform
   when "freebsd"
-    "gmake"
+    "--enable-pthread"
   else
     "make"
   end
 
+
+
 build do
   # command "#{install_dir}/embedded/bin/autoconf", :env => env
-  command "./configure --prefix=#{install_dir}/embedded --with-opt-dir=#{install_dir}/embedded --enable-shared --disable-install-doc", :env => env
-  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH #{gmake} -j #{max_build_jobs}" #XXX: strip env to stop bundler from messing with us
-  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH #{gmake} install"
+  command "./configure --prefix=#{install_dir}/embedded --with-opt-dir=#{install_dir}/embedded --enable-shared --disable-install-doc #{configure_args}", :env => env
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH make -j #{max_build_jobs}" #XXX: strip env to stop bundler from messing with us
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH make install"
 end
