@@ -56,7 +56,6 @@ build do
              "-L#{install_dir}/embedded/lib",
              "-I#{install_dir}/embedded/include",
              "-R#{install_dir}/embedded/lib"].join(" ")
-            :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"})
   else
     command(["./config",
              "--prefix=#{install_dir}/embedded",
