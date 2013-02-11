@@ -19,9 +19,15 @@ name "ruby"
 version "1.9.3-p286"
 
 deps = ["zlib", "ncurses", "libedit", "openssl", "libyaml", "libiconv"]
-deps << "gdbm" if OHAI.platform == "mac_os_x"
-#deps << "libffi" if OHAI.platform == "freebsd"
-deps << "libgcc" if (platform == "solaris2" and Omnibus.config.solaris_compiler == "gcc")
+case platform
+when "mac_os_x"
+  deps << "gdbm"
+when "freebsd"
+  deps << "gdbm"
+#  deps << "libexecinfo"
+when "solaris2"
+  deps << "libgcc" if Omnibus.config.solaris_compiler == "gcc"
+end
 dependencies deps
 
 source :url => "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-#{version}.tar.gz",
@@ -45,7 +51,7 @@ env =
     elsif Omnibus.config.solaris_compiler == "gcc"
     {
       "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
-      "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -static-libgcc",
+      "L,DFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -static-libgcc",
       "LD_OPTIONS" => "-R#{install_dir}/embedded/lib"
     }
     else
@@ -54,7 +60,8 @@ env =
   when "freebsd"
     {
       "RUBYOPT" => "",
-      "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+      "CFLAGS" => "-fno-omit-frame-pointer -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+      #"LDFLAGS" => "-Wl,-rpath,#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib",
       "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
       "LD_OPTIONS" => "-R#{install_dir}/embedded/lib"
     }
@@ -65,7 +72,19 @@ env =
     }
   end
 
+extra_configure_args =
+  case platform
+  when "freebsd"
+    #"--with-execinfo-dir=#{install_dir}/embedded"
+    "--without-execinfo"
+  else
+    ""
+  end
+
 build do
+  if platform == "freebsd"
+    patch :source => "freebsd-libexecinfo-location.patch"
+  end
   command ["./configure",
            "--prefix=#{install_dir}/embedded",
            "--with-opt-dir=#{install_dir}/embedded",
@@ -73,9 +92,10 @@ build do
            "--enable-shared",
            "--enable-libedit",
            "--with-ext=psych",
+           extra_configure_args,
            "--disable-install-doc"].join(" "), :env => env
-    command "make -j #{max_build_jobs}", :env => env
-    command "make install", :env => env
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH make -j #{max_build_jobs}", :env => env
+  command "env - #{env.map{|k,v| k=[k,"'#{v}'"].join("=")}.join(" ")} PATH=$PATH make install", :env => env
 
 #  if (platform == "solaris2" and Omnibus.config.solaris_compiler == "gcc")
 #    command "/opt/omnibus/bootstrap/bin/chrpath -r #{install_dir}/embedded/lib #{install_dir}/embedded/lib/libruby.so.1"
