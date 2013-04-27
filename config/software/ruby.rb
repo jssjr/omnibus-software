@@ -18,17 +18,14 @@
 name "ruby"
 version "1.9.3-p286"
 
-deps = ["zlib", "ncurses", "libedit", "openssl", "libyaml", "libiconv"]
-case platform
-when "mac_os_x"
-  deps << "gdbm"
-when "freebsd"
-  deps << "gdbm"
-#  deps << "libexecinfo"
-when "solaris2"
-  deps << "libgcc" if Omnibus.config.solaris_compiler == "gcc"
-end
-dependencies deps
+dependency "zlib"
+dependency "ncurses"
+dependency "libedit"
+dependency "openssl"
+dependency "libyaml"
+dependency "libiconv"
+dependency "gdbm" if OHAI.platform == "mac_os_x" or OHAI.platform == "freebsd"
+dependency "libgcc" if (platform == "solaris2" and Omnibus.config.solaris_compiler == "gcc")
 
 source :url => "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-#{version}.tar.gz",
        :md5 => 'e2469b55c2a3d0d643097d47fe4984bb'
@@ -51,7 +48,7 @@ env =
     elsif Omnibus.config.solaris_compiler == "gcc"
     {
       "CFLAGS" => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
-      "L,DFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -static-libgcc",
+      "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -static-libgcc",
       "LD_OPTIONS" => "-R#{install_dir}/embedded/lib"
     }
     else
@@ -61,7 +58,6 @@ env =
     {
       "RUBYOPT" => "",
       "CFLAGS" => "-fno-omit-frame-pointer -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
-      #"LDFLAGS" => "-Wl,-rpath,#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib",
       "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
       "LD_OPTIONS" => "-R#{install_dir}/embedded/lib"
     }
