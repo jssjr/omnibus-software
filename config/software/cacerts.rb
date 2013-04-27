@@ -15,17 +15,16 @@
 # limitations under the License.
 #
 
-name "omnibus-ctl"
-version "0.0.6"
-dependencies ["ruby","rubygems","bundler"]
+name "cacerts"
+version "2012.12.19"  # date of the file is in a comment at the start
 
-source :git => "git://github.com/opscode/omnibus-ctl.git"
+source :url => "http://curl.haxx.se/ca/cacert.pem",
+       :md5 => '47961e7ef15667c93cd99be01b51f00a'
 
-relative_path "omnibus-ctl"
+relative_path "cacerts-#{version}"
 
 build do
-  gem "build omnibus-ctl.gemspec"
-  gem "install omnibus-ctl-#{version}.gem"
-  command "mkdir -p #{install_dir}/embedded/service/omnibus-ctl"
+  command "mkdir -p #{install_dir}/embedded/ssl/certs"
+  command "cp cacert.pem #{install_dir}/embedded/ssl/certs/cacert.pem"
+  command "ln -sf #{install_dir}/embedded/ssl/certs/cacert.pem #{install_dir}/embedded/ssl/cert.pem"
 end
-
