@@ -58,7 +58,7 @@ build do
 
   configure_command = case platform
                       when "mac_os_x"
-                        ["./Configure",
+                        ["/bin/sh ./Configure",
                          "darwin64-x86_64-cc",
                          "--prefix=#{install_dir}/embedded",
                         "--with-zlib-lib=#{install_dir}/embedded/lib",
