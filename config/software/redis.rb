@@ -26,8 +26,20 @@ relative_path "redis-2.4.7"
 make_args = ["PREFIX=#{install_dir}/embedded",
              "CFLAGS='-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include'",
              "LD_RUN_PATH=#{install_dir}/embedded/lib"].join(" ")
+build_env =
+  case platform
+  when "mac_os_x"
+    {
+      "CC" => "/usr/bin/gcc",
+      "CXX" => "usr/bin/g++",
+      "LD" => "/usr/bin/gcc"
+    }
+  else
+    {
+    }
+  end
 
 build do
-  command ["make -j #{max_build_jobs}", make_args].join(" ")
+  command ["make -j #{max_build_jobs}", make_args].join(" "), :env => build_env
   command ["make install", make_args].join(" ")
 end
